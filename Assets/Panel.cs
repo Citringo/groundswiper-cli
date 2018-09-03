@@ -36,20 +36,15 @@ public class Panel : MonoBehaviour {
 
     }
 
-	void Update()
-	{
-        GetTouch();
-	}
+	bool prevIsBeingTouched;
 
-    bool prevIsBeingTouched;
-
-    void GetTouch()
+    public TouchResponse GetTouch()
     {
         bool isBeingTouched = false;
 
         foreach (var t in Input.touches)
         {
-            if (Physics2D.CircleCastAll(t.position, 8, Vector2.zero).Any(r => r.transform == transform))
+            if (Physics2D.CircleCastAll(t.position, t.radius, Vector2.zero).Any(r => r.transform == transform))
             {
                 isBeingTouched = true;
                 break;
@@ -57,14 +52,18 @@ public class Panel : MonoBehaviour {
         }
 
         if (isBeingTouched == prevIsBeingTouched)
-            return;
-        Debug.Log(gameObject.name + "を" + (isBeingTouched ? "おした" : "はなした"));
-
+            return TouchResponse.Keeping;
         img.color = isBeingTouched ? on : off;
-
-        GroundSwiper.I.SendData(isBeingTouched ? KeyMode.Down : KeyMode.Up, keyInfo);
         prevIsBeingTouched = isBeingTouched;
+        return isBeingTouched ? TouchResponse.Entered : TouchResponse.Leaved;
     }
+}
+
+public enum TouchResponse 
+{
+    Entered,
+    Leaved,
+    Keeping
 }
 
 static class Extension

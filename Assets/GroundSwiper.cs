@@ -13,10 +13,11 @@ public class GroundSwiper
 
     private WebSocket sock;
 
-    private readonly byte[] data = new byte[2];
+    List<byte> bytes;
 
     public void Connect(string protocol, string path, string port)
     {
+        bytes = new List<byte>();
         try
         {
             sock = new WebSocket($"{protocol}{path}:{port}");
@@ -28,13 +29,25 @@ public class GroundSwiper
         }
     }
 
-    public void SendData(KeyMode mode, ConsoleKey key)
+    public void Close()
+    {
+        sock.Close();
+    }
+
+    public void QueueData(KeyMode mode, ConsoleKey key)
     {
         // 0byte: mode (0: down, 1: up)
         // 1byte: KeyCode
-        data[0] = (byte)mode;
-        data[1] = (byte)key;
-        sock.Send(data, 0, 2);
+        bytes.Add((byte)mode);
+        bytes.Add((byte)key);
+    }
+
+    public void SendData()
+    {
+        //if (bytes.Count == 0) return;
+        //sock.Send(bytes.ToArray(), 0, bytes.Count);
+        //Debug.Log(bytes.Count);
+        //bytes.Clear();
     }
 }
 
