@@ -44,10 +44,10 @@ public class GroundSwiper
 
     public void SendData()
     {
-        //if (bytes.Count == 0) return;
-        //sock.Send(bytes.ToArray(), 0, bytes.Count);
-        //Debug.Log(bytes.Count);
-        //bytes.Clear();
+        if (bytes.Count == 0) return;
+        sock.Send(bytes.ToArray(), 0, bytes.Count);
+        Debug.Log(bytes.Count);
+        bytes.Clear();
     }
 }
 
