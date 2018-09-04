@@ -13,14 +13,12 @@ public class Connect : MonoBehaviour
     InputField ipField;
     [SerializeField]
     InputField portField;
-    [SerializeField]
-    Dropdown protocolDropdown;
 
     public void OpenWS()
     {
         try
         {
-            GroundSwiper.I.Connect(protocolDropdown.options[protocolDropdown.value].text, ipField.text, portField.text);
+            GroundSwiper.I.Connect(ipField.text, portField.text);
         }
         catch(GSException e)
         {

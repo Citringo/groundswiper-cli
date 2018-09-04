@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
-using WebSocket4Net;
+using System.Net.Sockets;
 
 public class GroundSwiper
 {
@@ -11,27 +11,27 @@ public class GroundSwiper
 
     private GroundSwiper() { }
 
-    private WebSocket sock;
-
     List<byte> bytes;
 
-    public void Connect(string protocol, string path, string port)
+    UdpClient udp;
+
+    string ip;
+    int port;
+
+    public void Connect(string ip, string port)
     {
         bytes = new List<byte>();
-        try
+        udp = new UdpClient();
+        this.ip = ip;
+        if (!int.TryParse(port, out this.port))
         {
-            sock = new WebSocket($"{protocol}{path}:{port}");
-            sock.Open();
-        }
-        catch (Exception ex)
-        {
-            throw new GSException("エラー: " + ex.Message, ex);
+            throw new GSException("エラー！ ポート番号が異常");
         }
     }
 
     public void Close()
     {
-        sock.Close();
+        udp.Close();
     }
 
     public void QueueData(KeyMode mode, ConsoleKey key)
@@ -44,10 +44,10 @@ public class GroundSwiper
 
     public void SendData()
     {
-        //if (bytes.Count == 0) return;
-        //sock.Send(bytes.ToArray(), 0, bytes.Count);
-        //Debug.Log(bytes.Count);
-        //bytes.Clear();
+        if (bytes.Count == 0) return;
+        udp.Send(bytes.ToArray(), bytes.Count, ip, port);
+        Debug.Log(bytes.Count);
+        bytes.Clear();
     }
 }
 
